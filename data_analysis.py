@@ -86,3 +86,60 @@ for col in categorical_cols:
 df_clean = df_encoded
 
 print(df_clean.head())
+
+
+# creating correlation matrix for numeric variables
+
+df[numeric_cols].corr()
+
+
+'''
+---------------------------------------------------------------------------------------
+'''
+
+
+# data cleaning code to use at start of each model/analysis
+
+# bring in data
+train = pd.read_csv('/Users/22holleranm/bios635/Train1.csv', encoding='latin1')
+
+# all numeric cols
+numeric_cols = ['HOSPNUM', 'RDELAY', 'AGE', 'RSBP', 'HOURLOCAL', 'MINLOCAL', 'ONDRUG', 
+    'DMAJNCHD', 'DSIDED', 'DRSISCD', 'DRSHD', 'DRSUNKD', 'DPED', 'DALIVED', 'DDEADD',
+    'FLASTD', 'FDEADC', 'FU1_RECD', 'FU2_DONE', 'FU1_COMP', 'TD', 'EXPDD', 'EXPD6', 'EXPD14',
+]
+
+# all cat calls
+categorical_cols = ['RCONSC', 'SEX','RSLEEP', 'RATRIAL', 'RCT', 
+    'RVISINF', 'RHEP24', 'RASP3', 'RDEF1', 'RDEF2', 'RDEF3', 'RDEF4', 'RDEF5',
+    'RDEF6', 'RDEF7', 'RDEF8', 'STYPE', 'DAYLOCAL', 'RXASP', 'RXHEP', 'DASP14', 
+    'DASPLT', 'DLH14', 'DMH14', 'DHH14', 'DSCH', 'DIVH', 'DAP', 'DOAC', 'DGORM', 
+    'DSTER', 'DCAA', 'DHAEMD', 'DCAREND', 'DTHROMB', 'DMAJNCH', 'DSIDE', 'DDIAGISC', 
+    'DDIAGHA', 'DDIAGUN', 'DNOSTRK', 'DRSISC', 'DRSH', 'DRSUNK', 'DPE', 'DALIVE',
+    'DPLACE', 'DDEAD', 'DDEADC', 'FDEAD', 'FRECOVER', 'FDENNIS', 'FPLACE',
+    'FAP', 'FOAC', 'COUNTRY', 'CNTRYNUM', 'CMPLASP', 'CMPLHEP', 'ID', 'SET14D', 
+    'ID14', 'OCCODE', 'DEAD1', 'DEAD2', 'DEAD3', 'DEAD4', 'DEAD5', 'DEAD6', 'DEAD7', 
+    'DEAD8', 'H14', 'ISC14', 'NK14', 'STRK14', 'HTI14', 'PE14', 'DVT14', 'TRAN14', 'NCB14' 
+]
+
+# encoding cat variables to be numeric
+train_encoded = train.copy()
+
+encoding_maps = {}
+
+for col in categorical_cols:
+    if col in train_encoded.columns:
+        train_encoded[col], mapping = pd.factorize(train_encoded[col], sort=True)
+        encoding_maps[col] = dict(enumerate(mapping))
+    else:
+        print(f"Column '{col}' not found in DataFrame — skipping.")
+
+train_clean = train_encoded
+
+
+# dropping unnecessary columns
+train_clean = train_clean.drop(['ID', 'RDATE', 'DMAJNCHX', 'DSIDEX', 'DNOSTRKX', 'DDEADX', 'FDEADX', 'NCCODE', 'DDEAD', 'DDEADC', 'FDEADC', 'DDEADD', 'DDEADC', ], axis =1)
+
+train_clean.head()
+
+# FDEAD IS ENCODED AS N = 0, Y = 1, U = 2
