@@ -106,7 +106,7 @@ train = pd.read_csv('/Users/22holleranm/bios635/Train1.csv', encoding='latin1')
 # all numeric cols
 numeric_cols = ['HOSPNUM', 'RDELAY', 'AGE', 'RSBP', 'HOURLOCAL', 'MINLOCAL', 'ONDRUG', 
     'DMAJNCHD', 'DSIDED', 'DRSISCD', 'DRSHD', 'DRSUNKD', 'DPED', 'DALIVED', 'DDEADD',
-    'FLASTD', 'FDEADC', 'FU1_RECD', 'FU2_DONE', 'FU1_COMP', 'TD', 'EXPDD', 'EXPD6', 'EXPD14',
+    'FLASTD', 'FDEADC', 'FU1_RECD', 'FU2_DONE', 'FU1_COMP', 'TD', 'EXPDD', 'EXPD6', 'EXPD14'
 ]
 
 # all cat calls
@@ -134,12 +134,22 @@ for col in categorical_cols:
     else:
         print(f"Column '{col}' not found in DataFrame — skipping.")
 
-train_clean = train_encoded
+train_clean1 = train_encoded
 
 
 # dropping unnecessary columns
-train_clean = train_clean.drop(['ID', 'RDATE', 'DMAJNCHX', 'DSIDEX', 'DNOSTRKX', 'DDEADX', 'FDEADX', 'NCCODE', 'DDEAD', 'DDEADC', 'FDEADC', 'DDEADD', 'DDEADC', ], axis =1)
+train_clean2 = train_clean1.drop(['DDEAD', 'OCCODE', 'DDEADD', 'FDEAD', 'DDEADX', 'FDEADD', 'DDEADC', 'FDEADX', 'FDEADC', 'FLASTD', 'NCCODE', 'RDATE', 'DMAJNCHX', 'DSIDEX', 'DNOSTRKX'], axis =1)
+
+# Fill columns with median/-1 for NaN values
+for col in train_clean2.columns:
+    if col in numeric_cols:
+        train_clean2[col].fillna(train_clean2[col].median(), inplace=True)
+    else:
+        train_clean2[col].fillna(-1, inplace=True)
+
+
+train_clean = train_clean2.copy()
 
 train_clean.head()
 
-# FDEAD IS ENCODED AS N = 0, Y = 1, U = 2
+# FDEAD IS ENCODED AS N = 0, Y = 1 (there are no U's)
